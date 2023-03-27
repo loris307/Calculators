@@ -2,10 +2,10 @@
 This repository contains two calculators developed for the website https://moenikes-finanzen.de/ - a financial advisory platform. The calculators are designed to help users calculate unit-linked pension insurance and interest rates for loans.
 
 ## Unit-linked pension insurance Calculator
-The unit-linked pension insurance calculator allows users to calculate the amount they need to save for their retirement. The calculator is designed to help users understand the importance of investing in their future and provides a clear and concise calculation of the necessary amount. The calculator is easy to use and can be customized to fit individual needs.
+The unit-linked pension insurance calculator allows users to calculate the amount they need to save for their retirement. The calculator is designed to help users understand the importance of investing in their future and provides a clear and concise calculation of the necessary amount. The calculator is easy to use and can be customized to fit individual needs. You can find it here: https://moenikes-finanzen.de/vorsorge/
 
 ## Interest Rate Calculator
-The interest rate calculator is designed to help users calculate the interest they need to pay for a loan. The calculator takes into account the loan amount, interest rate, and the duration of the loan. This calculator can help users understand the total cost of their loan and plan their finances accordingly.
+The interest rate calculator is designed to help users calculate the interest they need to pay for a loan. The calculator takes into account the loan amount, interest rate, and the duration of the loan. This calculator can help users understand the total cost of their loan and plan their finances accordingly. You can find it here: https://moenikes-finanzen.de/kredite/
 
 ## How to Use
 Both calculators are available for use on the https://moenikes-finanzen.de/ website. Simply click on the calculator you wish to use and input the necessary information to get your calculation.
