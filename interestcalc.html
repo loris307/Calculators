@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interestrates calculator</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="style2.css" media="screen" />
+</head>
+<body>
+    
+
+<div id="app">
+	<section class="hero is-info">
+		<div class="hero-body">
+			
+		</div>
+	</section>
+
+	<div class="container">
+		
+
+		<div class="grid--auto-2-3 gap--l">
+		
+		<div>
+			<div class="container">
+				<h1 class="title">
+					Unser Kreditrechner!
+				</h1>
+				<h3 class="subtitle">
+					Berechnen Sie jetzt ihren Kredit 
+				</h3>      
+			</div>
+			
+			<p class="ins">
+			Werte eingeben und monatliche Rate, Gesamtpreis und Zinsen sehen! 
+		</p>
+			
+			<div class="columns">
+
+				<div class="inputDings">    
+					<label class="rechnerlabel">Loan Amount in €</label>
+					<input min="0" max="80000" class="form-control form-control-m" type="number" v-on:blur="calc" v-model.number="loan.principal">
+				</div>
+				<div class="inputDings">    
+					<label class="rechnerlabel">Interest in %</label>
+					<input class="form-control form-control-m" type="text" v-on:blur="calc" v-model.number="loan.interest">
+				</div>
+				<div class="inputDings">    
+					<label class="rechnerlabel">Years</label>
+					<input min="0" max="10" class="form-control form-control-m" type="number" v-on:blur="calc" v-model.number="loan.timeYears">
+				</div>
+				
+			</div>
+			<button class="btn--primary btn--xs butt11" v-on:click="calc">Calculate</button>
+
+		</div>
+
+		<div class="rechnerBox">
+
+			<div class="columns">
+				<div class="outputL outputL1">
+					<div class="">
+						<h3 class="rechner-text">Monthly Rate </h3>
+						<p class="rechner-text">{{ formatPrice(loan.payment) }}€</p>
+					</div>
+				</div>
+				<div class="outputL outputL2">
+					<div class="">
+						<h3 class="rechner-text">Total Amount </h3>
+						<p class="rechner-text">{{ formatPrice(loan.total) }}€</p>
+					</div>
+				</div>
+				<div class="outputL outputL3">
+					<div class="">
+						<h3 class="rechner-text"> Total Interest</h3>
+						<p class="rechner-text">{{ formatPrice(loan.totalInterest) }}€</p>
+					</div>
+				</div>
+
+			</div>
+		</div>
+</div>
+
+
+	</div>
+</div>
+</body>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function(event){
+	var myApp = new Vue({
+		el: '#app',
+		
+		data:{
+			loan: {
+      		principal: 20000,
+     		interest: 6,
+      		compoundingEvery: 12,
+      		timeYears: 10,
+      		payment: 0,
+      		total: 0,
+      		totalInterest: 0,
+      		l: 0,
+      		r: 0
+    		},
+		},
+		methods: {	
+    		
+			calc: function () {
+				this.loan.l =  this.loan.principal*((1+ ((this.loan.interest/100)/this.loan.compoundingEvery))**(this.loan.compoundingEvery*this.loan.timeYears));
+      			this.loan.r = (((1+ ((this.loan.interest/100)/this.loan.compoundingEvery))**(this.loan.compoundingEvery*this.loan.timeYears))-1)/((this.loan.interest/100)/this.loan.compoundingEvery);
+     			this.loan.payment = Math.round(this.loan.l / this.loan.r * 100) /100 ;
+     			this.loan.total = Math.round(this.loan.payment * this.loan.compoundingEvery*this.loan.timeYears  * 100) /100 ;
+      			this.loan.totalInterest = Math.round((this.loan.total - this.loan.principal )  * 100) /100 ;
+    			},
+    		
+			formatPrice(value) {
+        		let val = (value/1).toFixed(2);
+        		return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+   			 }
+    
+  		}
+	});
+	
+})
+</script>
+</html>

@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="style.css" media="screen" />
+    <title>Document</title>
+    
+</head>
+	<body>
+		
+		<div class="gap--xxl backgroundLG">
+
+			<div class="grid--auto-1-2 gap--l marBLG">
+				<div>
+					<div class="inputContainerLG">
+						<label class="fullwLG"> Alter: </label>
+						<input class="fullwLG" type="number" id="alter" name="alter">
+					</div>
+
+					<div class="inputContainer">
+						<label> Monatlicher Einzahlungsbetrag: </label>
+						<input type="number" id="monBetrag" name="monBetrag">
+					</div>
+
+					<div class="inputContainer">
+						<label> Rentenalter: </label>
+						<input type="number" id="renteAlter" name="renteAlter">
+					</div>
+
+					<button class="btn--primary btn--xs butt11" type="button" onclick="getValue()">Berechnen</button>
+				</div>
+
+				<div>
+
+					<canvas id="myChart" width="600" height="400"></canvas>
+
+				</div>
+			</div>
+
+			<h3 id="gesamt3"> Gesamt eingezahlt: </h3>
+
+
+			<div class="grid--auto-2 marTLG">
+				<div>
+
+
+					<h3 class="marginTopLG">Einmalige Auszahlung:</h3>
+					<label> 9% Prognose </label>
+					<div class="bigClass" id="auszahlung9"></div> 
+					
+					<label> 6% Prognose </label>
+					<div class="midClass" id="auszahlung6"></div> 
+					
+					<label> 3% Prognose </label>
+					<div class="smallClass" id="auszahlung3"> </div>
+					
+					
+					
+				</div>
+
+				<div>
+					<h3 class="marginTopLG">Monatliche Rente:</h3>
+					<label> 9% Prognose </label>
+					<div class="bigClass" id="auszahlung9MonRen"></div>
+					
+					<label> 6% Prognose </label>
+					<div class="midClass" id="auszahlung6MonRen"></div> 
+					
+					<label> 3% Prognose </label>
+					<div class="smallClass" id="auszahlung3MonRen"></div>
+					
+					
+					
+				</div>
+			</div>
+
+		</div>
+	</body>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.bundle.min.js"></script>
+<script>
+
+	/*!
+ * Chart.js
+ * http://chartjs.org/
+ * Version: 2.7.2
+ *
+ * Copyright 2018 Chart.js Contributors
+ * Released under the MIT license
+ * https://github.com/chartjs/Chart.js/blob/master/LICENSE.md
+ */
+	
+    //Variablen für Alterkacke
+    let alterInput
+    let dataAlter 
+    let rentenAlter
+    //Variablen für Betrag
+    let inputmonBetrag
+    let betragInput
+    //Variablen Auzahlbeträge
+    let zahlung3;
+    let zahlung6;
+    let zahlung9;
+    //Variablen für monatliche Rente 
+    let zahlung3MonRen
+    let zahlung6MonRen
+    let zahlung9MonRen
+
+    
+    //Kontrolle der Ganzen logik...
+    function getValue() {
+        myChart.data.datasets.forEach((dataset) => {
+            dataset.data = [];
+        });
+        myChart.data.labels = [];
+    
+        //Rentenalter bekommen
+        var inputRentenalter = document.getElementById("renteAlter");
+        rentenAlter = parseInt(inputRentenalter.value);
+
+        //Input Alter bekommen und X- Achse machen
+        var inputElement = document.getElementById("alter");
+        alterInput = parseInt(inputElement.value);
+        dataAlter = getNumberArray(alterInput) // DataAlter = zeitbisrente
+
+        //Input monatlicher Betrag bekomme und brechnen
+        var inputmonBetrag = document.getElementById("monBetrag");
+        betragInput = parseInt(inputmonBetrag.value);
+        
+        //getBetrag befüllt die Data Arrays + returned den gesamtBetrag
+        let gesamt3B = getBetrag3(dataAlter, betragInput); 
+        getBetrag6(dataAlter, betragInput);
+        getBetrag9(dataAlter, betragInput);
+        
+        //Einfügen des Gesamt BEZAHLTEN Wertes
+        const gesamteingezahlt = document.getElementById("gesamt3");
+        appendOrUpdateChild(gesamteingezahlt, "gesamteingezahlt", "" + gesamt3B.toFixed(2) + "€");
+
+
+        //Einfügen des Auszahlungsbetrags: Eingezahlt + ROI
+        const auszahlung3Element = document.getElementById("auszahlung3");
+        appendOrUpdateChild(auszahlung3Element, "auszahlung3Belement", "" + zahlung3.toFixed(2) + "€");
+        
+        const auszahlung6Element = document.getElementById("auszahlung6");
+        appendOrUpdateChild(auszahlung6Element, "auszahlung6Belement", "" + zahlung6.toFixed(2) + "€");
+
+        const auszahlung9Element = document.getElementById("auszahlung9");
+        appendOrUpdateChild(auszahlung9Element, "auszahlung9Belement", "" + zahlung9.toFixed(2) + "€");
+
+
+        //Einfügen der Monatlichen Renten -> Aktuell nix. Berechnung sollte in getBetrag() stattfinden. Variablen sind schon initialisiert oben
+        const auszahlung3ElementMonRen = document.getElementById("auszahlung3MonRen");
+        appendOrUpdateChild(auszahlung3ElementMonRen, "auszahlung3ElementMonRen", "" + zahlung3MonRen.toFixed(2) + "€");
+        
+        const auszahlung6ElementMonRen = document.getElementById("auszahlung6MonRen");
+        appendOrUpdateChild(auszahlung6ElementMonRen, "auszahlung6ElementMonRen", "" + zahlung6MonRen.toFixed(2) + "€");
+
+        const auszahlung9ElementMonRen = document.getElementById("auszahlung9MonRen");
+        appendOrUpdateChild(auszahlung9ElementMonRen, "auszahlung9ElementMonRen", "" + zahlung9MonRen.toFixed(2) + "€");
+
+
+        myChart.update() //Man muss chart updaten damit values reingehen
+    
+    }
+
+    
+
+    //Graph
+    var ctx = document.getElementById("myChart").getContext("2d");
+    var myChart = new Chart(ctx, {
+      
+      type: "line",
+      data: {
+        labels: [],
+        datasets: [
+        {
+            label: '3% Prognose', //Hier einfach jeweils richtig bennen, hab da kein bock drauf 
+            data: [],
+            borderColor: '#ccd1ee', // Farben anpassen
+            backgroundColor: '#ccd1ee',// Farben anpassen
+            fill: true
+        },
+        {
+            label: '6% Prognose',
+            data: [],
+            borderColor: '#99a2dd',
+            backgroundColor: '#99a2dd',
+            fill: true
+        },
+        {
+            label: '9% Prognose',
+            data: [],
+            borderColor: '#192eb1',
+            backgroundColor: '#192eb1',
+            fill: true
+        }
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+            title: {
+                display: true,
+                text: (ctx) => 'Chart.js Line Chart - stacked=' + ctx.chart.options.scales.y.stacked
+            },
+            tooltip: {
+            mode: 'index'
+            },
+        },
+        interaction: {
+            mode: 'nearest',
+             axis: 'x',
+            intersect: false
+        },
+        scales: {
+            x: {
+                title: {
+                display: true,
+                text: 'Month'
+                }
+            },
+            y: {
+                stacked: true,
+                title: {
+                display: true,
+                text: 'Value'
+                }
+            }
+        }
+      }
+    });
+
+    //X Achse befüllen
+    function getNumberArray(x) {    
+        let numbers = [];
+        let i = 2024;
+        let ZeitBisRente = rentenAlter - x //Hier rentenalter rein, nur hier 
+        let re = ZeitBisRente
+        ZeitBisRente = ZeitBisRente+2023
+        myChart.data.labels = [];
+        while (i <= ZeitBisRente) {
+            numbers.push[i];
+            myChart.data.labels.push(i) //Werte hinzufügen
+            i++;
+        }
+        console.log(numbers + "hier getvalue")
+        return re;
+    }
+
+
+    function getBetrag3(dataAlter ,betragInput){
+        let jahrbetrag = betragInput*12 //Jährlicher Betrag
+        let zaehler =  jahrbetrag*1.03;
+        let gesamt = jahrbetrag*(dataAlter)
+        let abzugBig = gesamt*0.025
+        let abzugSmall = abzugBig/5
+        
+
+        let ree; //für Rückgabe des endwertes 
+
+        for(let i = 1; i < dataAlter+1; i++){ //läuft über Laufzeit in Jahre
+            if(i<=5){
+                zaehler = zaehler-abzugSmall;
+                myChart.data.datasets[0].data.push(zaehler);
+                zaehler = zaehler*1.03 + jahrbetrag;
+            }else{
+                ree = zaehler //für Rückgabe des endwertes 
+                myChart.data.datasets[0].data.push(zaehler);
+                zaehler = zaehler*1.03 + jahrbetrag;
+            }
+            
+        }
+        zahlung3 = ree;
+
+        //mon Rente 
+        let faktor = zahlung3/10000
+        zahlung3MonRen = faktor * getRentenFaktor()
+
+        return gesamt
+    }
+
+    function getBetrag6(dataAlter ,betragInput){
+        let jahrbetrag = betragInput*12 //Jährlicher Betrag
+        let zaehler =  jahrbetrag*1.06;
+        let gesamt = jahrbetrag*(dataAlter)
+        let abzugBig = gesamt*0.025
+        let abzugSmall = abzugBig/5
+
+        let ree;
+        for(let i = 1; i < dataAlter+1; i++){ //läuft über Laufzeit in Jahre
+            if(i<=5){
+                zaehler = zaehler-abzugSmall;
+                myChart.data.datasets[1].data.push(zaehler);
+                zaehler = zaehler*1.06 + jahrbetrag;
+            }else{
+                ree = zaehler
+                myChart.data.datasets[1].data.push(zaehler);
+                zaehler = zaehler*1.06 + jahrbetrag;
+            }
+        }
+        zahlung6 = ree;
+
+        //mon Rente 
+        let faktor = zahlung6/10000
+        zahlung6MonRen = faktor * getRentenFaktor()
+
+        return gesamt
+        
+    }
+
+    function getBetrag9(dataAlter ,betragInput){
+        let jahrbetrag = betragInput*12 //Jährlicher Betrag
+        let zaehler =  jahrbetrag*1.09;
+        let gesamt = jahrbetrag*(dataAlter)
+        let abzugBig = gesamt*0.025
+        let abzugSmall = abzugBig/5
+
+        let ree;
+        
+        for(let i = 1; i < dataAlter+1; i++){ //läuft über Laufzeit in Jahre
+            if(i<=5){
+                zaehler = zaehler-abzugSmall;
+                myChart.data.datasets[2].data.push(zaehler);
+                zaehler = zaehler*1.09 + jahrbetrag;
+            }else{
+                ree = zaehler
+                myChart.data.datasets[2].data.push(zaehler);
+                zaehler = zaehler*1.09 + jahrbetrag;
+            }
+        }
+        zahlung9 = ree;
+
+        //mon Rente 
+        let faktor = zahlung9/10000
+        zahlung9MonRen = faktor * getRentenFaktor()
+
+        return gesamt
+    }
+
+    function appendOrUpdateChild(parent, childId, childValue) {
+        let childElement = document.getElementById(childId);
+        if (!childElement) {
+            childElement = document.createElement('p');
+            childElement.id = childId;
+            parent.appendChild(childElement);
+        }
+        childElement.innerHTML = childValue;
+    }
+
+    function getRentenFaktor(){
+        let re 
+        re = rentenAlter - 29
+        return re
+    }
+/*
+    
+*/
+    
+
+   
+    </script>
+</html>

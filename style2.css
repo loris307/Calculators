@@ -1,0 +1,92 @@
+    label {
+        color: #aaa;
+    }
+    input, button, label, p {
+        margin-bottom: 0.5em;
+    }
+    #app {
+        padding: 0 10px;
+    }
+    .columns p {
+        font-weight: bold;
+        line-height: 40px;
+    }
+    .columns, #app {
+        margin-top: 1em;
+    }
+    .ins {
+        margin-top: 2em;
+    }
+    .hero {
+        padding-top: 5vh;
+    }
+    
+    .outputL{
+        size: 100%;
+        background-color: var(--primary);
+        padding: 10px;
+        margin: 10px;
+        border-radius: 3px;
+        border: solid white 5px
+    }
+    
+    .rechner-text{
+        color: black
+    }
+    
+    .inputDings{
+        margin-top: var(--space-s);
+    }
+    .rechnerlabel{
+        color: #666666;
+    }
+    
+    
+    
+    input[type=number] {
+        width: 100%;
+        padding: 12px 20px;
+        margin: 8px 0;
+        box-sizing: border-box;
+        border: 3px solid #ccc;
+        webkit-transition: 0.5s;
+        transition: 0.5s;
+        outline: none;
+    }
+    
+    input[type=number]:focus {
+        border: 3px solid #555;
+    }
+    
+    input[type=text] {
+        width: 100%;
+        padding: 12px 20px;
+        margin: 8px 0;
+        box-sizing: border-box;
+        border: 3px solid #ccc;
+        webkit-transition: 0.5s;
+        transition: 0.5s;
+        outline: none;
+    }
+    
+    input[type=text]:focus {
+        border: 3px solid #555;
+    }
+    
+    .butt11{
+        border-radius: 5px;
+        margin-top: var(--space-m);
+        font-size: var(--text-m);
+        color: white;
+    }
+    
+    .rechnerBox{
+        margin-top: auto;
+        margin-bottom: auto;
+    }
+    
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
